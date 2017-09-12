@@ -1,0 +1,22 @@
+{
+  "name": "nomivacimporter",
+  "version": "1.0.0",
+  "description": "Importador de Vacunas desde sql Nomivac",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "es6-promise": "^4.1.1",
+    "mongodb": "^2.2.30",
+    "mssql": "^4.0.4",
+    "require": "^2.4.20",
+    "require-dir": "^0.3.0",
+    "typescript": "^2.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^8.0.19"
+  }
+}
