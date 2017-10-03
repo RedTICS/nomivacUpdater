@@ -11,8 +11,9 @@ export class servicioMssql {
             requestTimeout: 190000,
             stream: true
         };
-        
+
         var listaRegistros: any[] = [];
+        let x = 0;
 
         return new Promise((resolve: any, reject: any) => {
             sql.connect(connection, function (err: any) {
@@ -23,12 +24,13 @@ export class servicioMssql {
 
                 var request = new sql.Request();
                 request.stream = true;
-                request.query(consulta);                
+                request.query(consulta);
                 // Puede ser una consulta a una vista que tenga toda la información
 
                 request.on('row', function (row: any) {
                     // Emitted for each row in a recordset
-                    console.log("Registrosss ", row);
+                    console.log("N° ", x);
+                    x++;
                     listaRegistros.push(row);
                 });
 
