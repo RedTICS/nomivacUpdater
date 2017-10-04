@@ -20,9 +20,12 @@ class importer {
 
     constructor() { }
 
-    getLastInsertedInMongo() {       
+    public cantVacunasSql: boolean = true;
+    
+    getLastInsertedInMongo() {
 
         let consulta;
+        let parametro = '';
 
         MongoClient.connect(url, function (err: any, dbMongo: any) {
 
@@ -31,12 +34,16 @@ class importer {
                 dbMongo.close();
             }
 
-            dbMongo.collection(coleccion).find().sort({ _id: -1 }).limit(1).toArray(function (err, data) {                
+            dbMongo.collection(coleccion).find().sort({ _id: -1 }).limit(1).toArray(function (err, data) {
+                console.log("Datata: ", data);
+                if (data.length > 0) {
+                    parametro = " id > " + data[0].idvacuna + " and";
+                }
 
-                consulta = "SELECT top 5 ID AS idvacuna, CONVERT(varchar(8), NroDocumento)  AS documento, Apellido AS apellido, Nombre AS nombre, FechaNacimiento AS fechaNacimiento, CASE Sexo WHEN 'M' THEN 'masculino' ELSE 'femenino' END AS sexo  , Vacuna AS vacuna, Dosis AS dosis, FechaAplicacion AS fechaAplicacion, Establecimiento AS efector FROM dbo.Nomivac WHERE id > " + data[0].idvacuna + " and CodigoAplicacion IS NOT null ORDER BY ID"
-                
+                consulta = "SELECT top 500000 ID AS idvacuna, CONVERT(varchar(8), NroDocumento)  AS documento, Apellido AS apellido, Nombre AS nombre, FechaNacimiento AS fechaNacimiento, CASE Sexo WHEN 'M' THEN 'masculino' ELSE 'femenino' END AS sexo  , Vacuna AS vacuna, Dosis AS dosis, FechaAplicacion AS fechaAplicacion, Establecimiento AS efector FROM dbo.Nomivac WHERE " + parametro + " CodigoAplicacion IS NOT null ORDER BY ID"
+                console.log("Consulta: ", consulta);
                 getVacunasNomivacSql(consulta);
-                
+
                 dbMongo.close()
             })
         });
@@ -49,6 +56,7 @@ function getVacunasNomivacSql(consulta: any) {
         .then((resultado: any) => {
             if (resultado == null) {
                 console.log('No encontrado');
+                this.cantVacunasSql = false;
             } else {
                 console.log('Iniciando actualizacion...')
                 updateMongo(resultado);
@@ -82,6 +90,11 @@ function updateMongo(listadoNomivac: any) {
                 }
             });
         });
+        console.log("Cant Vacunas SQL: ", this.cantVacunasSql);
+        if (this.cantVacunasSql)
+            new importer().getLastInsertedInMongo();
+
+        console.log("Termino");
     })
 }
 
