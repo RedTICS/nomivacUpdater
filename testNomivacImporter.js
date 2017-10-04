@@ -26,12 +26,10 @@ var importer = (function () {
                 dbMongo.close();
             }
             dbMongo.collection(coleccion).find().sort({ _id: -1 }).limit(1).toArray(function (err, data) {
-                console.log("Datata: ", data);
                 if (data.length > 0) {
                     parametro = " id > " + data[0].idvacuna + " and";
                 }
                 consulta = "SELECT top 500000 ID AS idvacuna, CONVERT(varchar(8), NroDocumento)  AS documento, Apellido AS apellido, Nombre AS nombre, FechaNacimiento AS fechaNacimiento, CASE Sexo WHEN 'M' THEN 'masculino' ELSE 'femenino' END AS sexo  , Vacuna AS vacuna, Dosis AS dosis, FechaAplicacion AS fechaAplicacion, Establecimiento AS efector FROM dbo.Nomivac WHERE " + parametro + " CodigoAplicacion IS NOT null ORDER BY ID";
-                console.log("Consulta: ", consulta);
                 getVacunasNomivacSql(consulta);
                 dbMongo.close();
             });
@@ -42,8 +40,8 @@ var importer = (function () {
 function getVacunasNomivacSql(consulta) {
     servicio.getVacunasNomivac(usuario, pass, server, db, consulta)
         .then(function (resultado) {
-        if (resultado == null) {
-            console.log('No encontrado');
+        if (resultado.length === 0) {
+            return;
         }
         else {
             console.log('Iniciando actualizacion...');
@@ -73,7 +71,7 @@ function updateMongo(listadoNomivac) {
                 }
             });
         });
-        console.log("Termino");
+        new importer().getLastInsertedInMongo();
     });
 }
 exports["default"] = new importer().getLastInsertedInMongo();
