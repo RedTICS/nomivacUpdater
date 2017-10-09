@@ -9,7 +9,7 @@ export const configPrivate = {
     },
     serverSql: {
         server: 'localhost',
-        database: 'SIPS'
+        database: 'sips'
     }
 }
 

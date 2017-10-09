@@ -57,3 +57,17 @@ typings/
 # dotenv environment variables file
 .env
 
+config.private.ts
+
+# Logs
+logs
+**/*.log
+**/*.log*
+**/*.js
+**/*.map
+*.js
+**.js
+*.map
+**.map
+
+

@@ -11,7 +11,7 @@ exports.configPrivate = {
     },
     serverSql: {
         server: 'localhost',
-        database: 'SIPS'
+        database: 'sips'
     }
 };
 // export = configPrivate; 
