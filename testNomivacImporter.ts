@@ -1,6 +1,6 @@
 import * as configPrivate from './config.private';
 import { servicioMssql } from './nomivacImporter'
-import { Promise } from 'es6-promise';
+// import { Promise } from 'es6-promise';
 
 import * as log from './logger'
 // const errorLog = require('./logger').errorlog;
