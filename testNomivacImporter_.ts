@@ -16,45 +16,51 @@ const pass: any = configPrivate.configPrivate.auth.password;
 const server: any = configPrivate.configPrivate.serverSql.server;
 const db: any = configPrivate.configPrivate.serverSql.database;
 const servicio: any = new servicioMssql();
+var dbRespaldada = false; //false hasta salvar la db actual
 
+class importer {
 
-export function getLastInsertedInMongo() {
+    constructor() { }
 
-    let consulta;
-    let parametro = '';
+    getLastInsertedInMongo() {
 
-    MongoClient.connect(url, function (err: any, dbMongo: any) {
+        let consulta;
+        let parametro = '';
 
-        if (err) {
-            console.log('Error conectando a mongoClient', err);
-            dbMongo.close();
-        }
+        MongoClient.connect(url, function (err: any, dbMongo: any) {
 
-        if (dbMongo.collection(coleccion)) {
-            if (dbMongo.collection("nomivac_old")) {
-                dbMongo.collection("nomivac_old").drop();
+            if (err) {
+                console.log('Error conectando a mongoClient', err);
+                dbMongo.close();
             }
-            dbMongo.collection(coleccion).rename("nomivac_old");
-            console.log('db respaldada..');
-        }
-
-        dbMongo.collection(coleccion).find().sort({ _id: -1 }).limit(1).toArray(function (err, data) {
-
-            if (data.length > 0) {
-                parametro = " id > " + data[0].idvacuna + " and";
-                // parametro = " where idCurso > " + data[0].idCurso;
+            if (!dbRespaldada) {
+                if (dbMongo.collection(coleccion)) {
+                    if (dbMongo.collection("old")) {
+                        dbMongo.collection("old").drop();
+                    }
+                    dbMongo.collection(coleccion).rename("old");
+                    console.log('db respaldada..');
+                }
+                dbRespaldada = true;
             }
 
-            consulta = "SELECT ID AS idvacuna, CONVERT(varchar(8), NroDocumento)  AS documento, Apellido AS apellido, Nombre AS nombre, FechaNacimiento AS fechaNacimiento, CASE Sexo WHEN 'M' THEN 'masculino' ELSE 'femenino' END AS sexo  , Vacuna AS vacuna, Dosis AS dosis, FechaAplicacion AS fechaAplicacion, Establecimiento AS efector FROM dbo.Nomivac WHERE " + parametro + " CodigoAplicacion IS NOT null ORDER BY ID";
-            // consulta = "select top 1000 * from Cursos " + parametro;
+            dbMongo.collection(coleccion).find().sort({ _id: -1 }).limit(1).toArray(function (err, data) {
 
-            getVacunasNomivacSql(consulta);
+                if (data.length > 0) {
+                    parametro = " id > " + data[0].idvacuna + " and";
+                    // parametro = " where idCurso > " + data[0].idCurso;
+                }
 
-            dbMongo.close()
-        })
-    });
+                consulta = "SELECT TOP 5 ID AS idvacuna, CONVERT(varchar(8), NroDocumento)  AS documento, Apellido AS apellido, Nombre AS nombre, FechaNacimiento AS fechaNacimiento, CASE Sexo WHEN 'M' THEN 'masculino' ELSE 'femenino' END AS sexo  , Vacuna AS vacuna, Dosis AS dosis, FechaAplicacion AS fechaAplicacion, Establecimiento AS efector FROM dbo.Nomivac WHERE " + parametro + " CodigoAplicacion IS NOT null ORDER BY ID";
+                // consulta = "select top 1000 * from Cursos " + parametro;
+
+                getVacunasNomivacSql(consulta);
+
+                dbMongo.close()
+            })
+        });
+    }
 }
-
 
 function getVacunasNomivacSql(consulta: any) {
 
@@ -108,7 +114,7 @@ function asyncFunction(listado, cb) {
 
 function callback(x) {
     log.successLogger.info(`Se insertaron: ${x} registros`);
-    //  getLastInsertedInMongo();
+    new importer().getLastInsertedInMongo();
 }
 
-//export default new importer().getLastInsertedInMongo();
+export default new importer().getLastInsertedInMongo();

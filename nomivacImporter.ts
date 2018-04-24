@@ -29,7 +29,7 @@ export class servicioMssql {
 
                 request.on('row', function (row: any) {
                     // Emitted for each row in a recordset
-                    console.log("N° ", x);
+                    //      console.log("N° ", x);
                     x++;
                     listaRegistros.push(row);
                 });
