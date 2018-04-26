@@ -23,7 +23,8 @@ const pass = configPrivate.configPrivate.auth.password;
 const server = configPrivate.configPrivate.serverSql.server;
 const db = configPrivate.configPrivate.serverSql.database;
 const servicio = new nomivacImporter_1.servicioMssql();
-function getLastInsertedInMongo() {
+function getLastInsertedInMongo( /*reespaldarDB: boolean*/) {
+    //export function getLastInsertedInMongo() {
     let consulta;
     let parametro = '';
     MongoClient.connect(url, function (err, dbMongo) {
@@ -31,19 +32,21 @@ function getLastInsertedInMongo() {
             console.log('Error conectando a mongoClient', err);
             dbMongo.close();
         }
-        if (dbMongo.collection(coleccion)) {
-            if (dbMongo.collection("nomivac_old")) {
-                dbMongo.collection("nomivac_old").drop();
-            }
-            dbMongo.collection(coleccion).rename("nomivac_old");
-            console.log('db respaldada..');
-        }
+        /*   if (reespaldarDB) {
+               if (dbMongo.collection(coleccion)) {
+                   if (dbMongo.collection("nomivac_old")) {
+                       dbMongo.collection("nomivac_old").drop();
+                   }
+                   dbMongo.collection(coleccion).rename("nomivac_old");
+                   console.log('db respaldada..');
+               }
+           } */
         dbMongo.collection(coleccion).find().sort({ _id: -1 }).limit(1).toArray(function (err, data) {
             if (data.length > 0) {
                 parametro = " id > " + data[0].idvacuna + " and";
                 // parametro = " where idCurso > " + data[0].idCurso;
             }
-            consulta = "SELECT ID AS idvacuna, CONVERT(varchar(8), NroDocumento)  AS documento, Apellido AS apellido, Nombre AS nombre, FechaNacimiento AS fechaNacimiento, CASE Sexo WHEN 'M' THEN 'masculino' ELSE 'femenino' END AS sexo  , Vacuna AS vacuna, Dosis AS dosis, FechaAplicacion AS fechaAplicacion, Establecimiento AS efector FROM dbo.Nomivac WHERE " + parametro + " CodigoAplicacion IS NOT null ORDER BY ID";
+            consulta = "SELECT TOP 3000 ID AS idvacuna, CONVERT(varchar(8), NroDocumento)  AS documento, Apellido AS apellido, Nombre AS nombre, FechaNacimiento AS fechaNacimiento, CASE Sexo WHEN 'M' THEN 'masculino' ELSE 'femenino' END AS sexo  , Vacuna AS vacuna, Dosis AS dosis, FechaAplicacion AS fechaAplicacion, Establecimiento AS efector FROM dbo.Nomivac WHERE " + parametro + " CodigoAplicacion IS NOT null ORDER BY ID";
             // consulta = "select top 1000 * from Cursos " + parametro;
             getVacunasNomivacSql(consulta);
             dbMongo.close();
@@ -98,7 +101,9 @@ function asyncFunction(listado, cb) {
 }
 function callback(x) {
     log.successLogger.info(`Se insertaron: ${x} registros`);
-    getLastInsertedInMongo();
+    getLastInsertedInMongo( /*false*/);
+    //  new importer().getLastInsertedInMongo();
 }
-//export default new importer().getLastInsertedInMongo();
+//exports.default = new importer().getLastInsertedInMongo();
+//db.getCollection('nomivac_old').find().sort({idvacuna:-1}).limit(1);
 //# sourceMappingURL=testNomivacImporter.js.map

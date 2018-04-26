@@ -19,7 +19,6 @@ const servicio: any = new servicioMssql();
 
 
 export function getLastInsertedInMongo() {
-
     let consulta;
     let parametro = '';
 
@@ -30,14 +29,6 @@ export function getLastInsertedInMongo() {
             dbMongo.close();
         }
 
-        if (dbMongo.collection(coleccion)) {
-            if (dbMongo.collection("nomivac_old")) {
-                dbMongo.collection("nomivac_old").drop();
-            }
-            dbMongo.collection(coleccion).rename("nomivac_old");
-            console.log('db respaldada..');
-        }
-
         dbMongo.collection(coleccion).find().sort({ _id: -1 }).limit(1).toArray(function (err, data) {
 
             if (data.length > 0) {
@@ -45,7 +36,7 @@ export function getLastInsertedInMongo() {
                 // parametro = " where idCurso > " + data[0].idCurso;
             }
 
-            consulta = "SELECT ID AS idvacuna, CONVERT(varchar(8), NroDocumento)  AS documento, Apellido AS apellido, Nombre AS nombre, FechaNacimiento AS fechaNacimiento, CASE Sexo WHEN 'M' THEN 'masculino' ELSE 'femenino' END AS sexo  , Vacuna AS vacuna, Dosis AS dosis, FechaAplicacion AS fechaAplicacion, Establecimiento AS efector FROM dbo.Nomivac WHERE " + parametro + " CodigoAplicacion IS NOT null ORDER BY ID";
+            consulta = "SELECT TOP 3000 ID AS idvacuna, CONVERT(varchar(8), NroDocumento)  AS documento, Apellido AS apellido, Nombre AS nombre, FechaNacimiento AS fechaNacimiento, CASE Sexo WHEN 'M' THEN 'masculino' ELSE 'femenino' END AS sexo  , Vacuna AS vacuna, Dosis AS dosis, FechaAplicacion AS fechaAplicacion, Establecimiento AS efector FROM dbo.Nomivac WHERE " + parametro + " CodigoAplicacion IS NOT null ORDER BY ID";
             // consulta = "select top 1000 * from Cursos " + parametro;
 
             getVacunasNomivacSql(consulta);
@@ -108,7 +99,5 @@ function asyncFunction(listado, cb) {
 
 function callback(x) {
     log.successLogger.info(`Se insertaron: ${x} registros`);
-    //  getLastInsertedInMongo();
+    getLastInsertedInMongo();
 }
-
-//export default new importer().getLastInsertedInMongo();
