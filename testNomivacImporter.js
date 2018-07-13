@@ -7,40 +7,57 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const configPrivate = require("./config.private");
-const nomivacImporter_1 = require("./nomivacImporter");
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+exports.__esModule = true;
+var configPrivate = require("./config.private");
+var nomivacImporter_1 = require("./nomivacImporter");
 // import { Promise } from 'es6-promise';
-const log = require("./logger");
+var log = require("./logger");
 // const errorLog = require('./logger').errorlog;
 // const successlog = require('./logger').successlog;
 // Require
-const MongoClient = require('mongodb').MongoClient;
-const url = configPrivate.configPrivate.mongoDB.host;
-const coleccion = configPrivate.configPrivate.mongoDB.collection;
-const usuario = configPrivate.configPrivate.auth.user;
-const pass = configPrivate.configPrivate.auth.password;
-const server = configPrivate.configPrivate.serverSql.server;
-const db = configPrivate.configPrivate.serverSql.database;
-const servicio = new nomivacImporter_1.servicioMssql();
-function getLastInsertedInMongo( /*reespaldarDB: boolean*/) {
-    //export function getLastInsertedInMongo() {
-    let consulta;
-    let parametro = '';
+var MongoClient = require('mongodb').MongoClient;
+var url = configPrivate.configPrivate.mongoDB.host;
+var coleccion = configPrivate.configPrivate.mongoDB.collection;
+var usuario = configPrivate.configPrivate.auth.user;
+var pass = configPrivate.configPrivate.auth.password;
+var server = configPrivate.configPrivate.serverSql.server;
+var db = configPrivate.configPrivate.serverSql.database;
+var servicio = new nomivacImporter_1.servicioMssql();
+function getLastInsertedInMongo() {
+    var consulta;
+    var parametro = '';
     MongoClient.connect(url, function (err, dbMongo) {
         if (err) {
             console.log('Error conectando a mongoClient', err);
             dbMongo.close();
         }
-        /*   if (reespaldarDB) {
-               if (dbMongo.collection(coleccion)) {
-                   if (dbMongo.collection("nomivac_old")) {
-                       dbMongo.collection("nomivac_old").drop();
-                   }
-                   dbMongo.collection(coleccion).rename("nomivac_old");
-                   console.log('db respaldada..');
-               }
-           } */
         dbMongo.collection(coleccion).find().sort({ _id: -1 }).limit(1).toArray(function (err, data) {
             if (data.length > 0) {
                 parametro = " id > " + data[0].idvacuna + " and";
@@ -56,7 +73,7 @@ function getLastInsertedInMongo( /*reespaldarDB: boolean*/) {
 exports.getLastInsertedInMongo = getLastInsertedInMongo;
 function getVacunasNomivacSql(consulta) {
     servicio.getVacunasNomivac(usuario, pass, server, db, consulta)
-        .then((resultado) => {
+        .then(function (resultado) {
         if (resultado.length === 0) {
             return;
         }
@@ -64,34 +81,46 @@ function getVacunasNomivacSql(consulta) {
             console.log('Iniciando actualizacion...');
             updateMongo(resultado);
         }
-    }).catch((err) => {
+    })["catch"](function (err) {
         console.error('Error**:' + err);
     });
 }
 function updateMongo(listadoNomivac) {
-    let x = 0;
-    let requests = listadoNomivac.reduce((promiseChain, item) => {
-        return promiseChain.then(() => __awaiter(this, void 0, void 0, function* () {
-            return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-                log.successLogger.info(`N° ${x}`);
-                x++;
-                yield asyncFunction(item, resolve);
-            }));
-        }));
+    var _this = this;
+    var x = 0;
+    var requests = listadoNomivac.reduce(function (promiseChain, item) {
+        return promiseChain.then(function () { return __awaiter(_this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                return [2 /*return*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    log.successLogger.info("N\u00B0 " + x);
+                                    x++;
+                                    return [4 /*yield*/, asyncFunction(item, resolve)];
+                                case 1:
+                                    _a.sent();
+                                    return [2 /*return*/];
+                            }
+                        });
+                    }); })];
+            });
+        }); });
     }, Promise.resolve());
-    requests.then(() => callback(x));
+    requests.then(function () { return callback(x); });
 }
 function asyncFunction(listado, cb) {
-    setTimeout(() => {
+    setTimeout(function () {
         MongoClient.connect(url, function (err, dbMongo) {
             dbMongo.collection(coleccion).save(listado, function (err2, result) {
                 if (err2) {
                     console.log('Error save:', err2);
-                    log.errorLogger.error(`Error Message : ${err2}`);
+                    log.errorLogger.error("Error Message : " + err2);
                     dbMongo.close();
                 }
                 else {
-                    log.successLogger.info(`Vacuna insertada: ${listado.idvacuna}`);
+                    log.successLogger.info("Vacuna insertada: " + listado.idvacuna);
                     dbMongo.close();
                 }
             });
@@ -100,10 +129,6 @@ function asyncFunction(listado, cb) {
     }, 100);
 }
 function callback(x) {
-    log.successLogger.info(`Se insertaron: ${x} registros`);
-    getLastInsertedInMongo( /*false*/);
-    //  new importer().getLastInsertedInMongo();
+    log.successLogger.info("Se insertaron: " + x + " registros");
+    getLastInsertedInMongo();
 }
-//exports.default = new importer().getLastInsertedInMongo();
-//db.getCollection('nomivac_old').find().sort({idvacuna:-1}).limit(1);
-//# sourceMappingURL=testNomivacImporter.js.map
