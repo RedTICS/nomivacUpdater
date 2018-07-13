@@ -1,10 +1,8 @@
 "use strict";
-exports.__esModule = true;
-var sql = require("mssql");
-var servicioMssql = /** @class */ (function () {
-    function servicioMssql() {
-    }
-    servicioMssql.prototype.getVacunasNomivac = function (usuario, password, server, db, consulta) {
+Object.defineProperty(exports, "__esModule", { value: true });
+const sql = require("mssql");
+class servicioMssql {
+    getVacunasNomivac(usuario, password, server, db, consulta) {
         var connection = {
             user: usuario,
             password: password,
@@ -14,8 +12,8 @@ var servicioMssql = /** @class */ (function () {
             stream: true
         };
         var listaRegistros = [];
-        var x = 0;
-        return new Promise(function (resolve, reject) {
+        let x = 0;
+        return new Promise((resolve, reject) => {
             sql.connect(connection, function (err) {
                 if (err) {
                     console.log("Error de Conexión sql", err);
@@ -46,7 +44,7 @@ var servicioMssql = /** @class */ (function () {
                 reject(err);
             });
         }); //Fin Promise
-    };
-    return servicioMssql;
-}());
+    }
+}
 exports.servicioMssql = servicioMssql;
+//# sourceMappingURL=nomivacImporter.js.map

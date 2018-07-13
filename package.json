@@ -4,6 +4,9 @@
   "description": "Importador de Vacunas desde sql Nomivac",
   "main": "index.js",
   "scripts": {
+    "tsc": "tsc",
+    "tsc:w": "tsc -w",
+    "lint": "tslint --project .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
